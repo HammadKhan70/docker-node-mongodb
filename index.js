@@ -2,12 +2,14 @@ const express = require('express')
 const mongoose = require("mongoose");
 const Users = require('./models/users')
 var bodyParser = require('body-parser')
-const url = 'mongodb://localhost:27017/docker'
+const url = 'mongodb://mongo:27017/docker'
 const app = express()
-const port = 8081
+const port = 5005
 
 //connect db
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Mongodb Connected'))
+  .catch(err => console.log(err))
 
 // parsing Request
 app.use(bodyParser.urlencoded({ extended: false }))
