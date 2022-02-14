@@ -2,7 +2,7 @@ const express = require('express')
 const mongoose = require("mongoose");
 const Users = require('./models/users')
 var bodyParser = require('body-parser')
-const url = 'mongodb://mongo:27017/docker'
+const url = 'mongodb://localhost:27017/docker'
 const app = express()
 const port = 5005
 
@@ -20,16 +20,27 @@ app.post('/addUser', (req, res) => {
   let name, email
   if (req.body.name) name = req.body.name
   if (req.body.email) email = req.body.email
+  
+  Users.find((err, response) => {
+    if(response.length == 0){
+      var userId = 1
+    }
+    if(response.length !== 0){
+      userId = response[0].userId + 1;
+    }
+    var user = new Users({
+      name,
+      email,
+      userId
+    })
 
-  var user = new Users({
-    name,
-    email
-  })
+    user.save((err, result) => {
+      if (err) return res.send(err)
+      else return res.send(result)
+    })
+  }).sort({userId: -1}).limit(1)
 
-  user.save((err, result) => {
-    if (err) return res.send(err)
-    else return res.send(result)
-  })
+ 
 })
 
 // getUser
